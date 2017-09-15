@@ -33,16 +33,16 @@ var awsS3Bucket = '';
 ////////////////////////////////////////////////////////////////////////////////
 function saveFileToAWS(theFile)
 {
-	var creds = true; // Assume good credentials.
+   var creds = true; // Assume good credentials.
 
-	// Set the required data.
+   // Set the required data.
    AWS.config.update({accessKeyId : awsAPIKey, 
-   	                secretAccessKey : awsAPISecret});
+                      secretAccessKey : awsAPISecret});
    AWS.config.region = awsAPIRegion;
 
    // Verify that the credentials are good.
    AWS.config.getCredentials(function(err) 
-	   {
+      {
          if (err) // Credentials are bad!
          {
             alert(err + "\n\nPlease fill in your AWS data at the top of the file.");
@@ -56,18 +56,18 @@ function saveFileToAWS(theFile)
    // Only try to upload if the file exists and the credentials are valid.
    if (theFile && creds)
    {
-	   var params = {Key: 'emails.txt', 
-	   				  ContentType: theFile.type, 
-	   				  Body: theFile};
+      var params = {Key: 'emails.txt', 
+                    ContentType: theFile.type, 
+                    Body: theFile};
 
-	   // Upload the data!			  
+      // Upload the data!			  
       bucket.upload(params).on('httpUploadProgress', function(evt) 
          {
-			   console.log("Uploaded :: " + parseInt((evt.loaded * 100) / evt.total)+'%');
-		   }).send(function(err, data) 
-		   {
-			   alert("File uploaded successfully.");
-		   });
+            console.log("Uploaded :: " + parseInt((evt.loaded * 100) / evt.total)+'%');
+         }).send(function(err, data) 
+         {
+            alert("File uploaded successfully.");
+         });
    }
 }
 
@@ -82,7 +82,7 @@ function saveFileToAWS(theFile)
 ////////////////////////////////////////////////////////////////////////////////
 function emailReminderIfNameNull()
 {
-	// As we've passed nothing to the function, "this" will refer to the 
+   // As we've passed nothing to the function, "this" will refer to the 
    // XMLHTTPRequest object that calls this function.
    var jsonUserData = JSON.parse(this.responseText);
 
@@ -91,18 +91,18 @@ function emailReminderIfNameNull()
    	// If the E-mail is null, we can't send a reminder; tell the operator.
       if (jsonUserData.email === null)
       {
-      	usernamesText += jsonUserData.login + "\n";
-      	document.write("No E-mail for " + jsonUserData.login + "!<br />");
+      	 usernamesText += jsonUserData.login + "\n";
+      	 document.write("No E-mail for " + jsonUserData.login + "!<br />");
       }
       else // There's an E-mail address listed, so send a reminder!
       {
-      	// JavaScript cannot send an E-mail, so we need to invoke some server-
-      	// side code here or connect to an E-mail API to actually send stuff.
-      	// <Fill_In_Later>
+         // JavaScript cannot send an E-mail, so we need to invoke some server-
+      	 // side code here or connect to an E-mail API to actually send stuff.
+      	 // <Fill_In_Later>
 
-      	// Assume that the E-mail has been sent at this point.
-      	usernamesText += jsonUserData.login + "\n";
-      	document.write("E-mail sent to " + jsonUserData.login + "!<br />");
+      	 // Assume that the E-mail has been sent at this point.
+      	 usernamesText += jsonUserData.login + "\n";
+      	 document.write("E-mail sent to " + jsonUserData.login + "!<br />");
       }
    }
 }
@@ -117,21 +117,21 @@ function emailReminderIfNameNull()
 ////////////////////////////////////////////////////////////////////////////////
 function getUserData(login, usernamesText)
 {
-	var userURL = 'https://api.github.com/users/' + login;
-	var userRequest = new XMLHttpRequest();
+   var userURL = 'https://api.github.com/users/' + login;
+   var userRequest = new XMLHttpRequest();
 
-	// Once we have the data, call the function to check the name and send an
-	// E-mail if the name is set to null.
-	userRequest.onload = emailReminderIfNameNull;
+   // Once we have the data, call the function to check the name and send an
+   // E-mail if the name is set to null.
+   userRequest.onload = emailReminderIfNameNull;
 
-	// Initialize the request
-	userRequest.open('get', userURL, false);
-	// NOTE: I don't like use the syncronous request here, but I've not used this
-	// function before, so I expect that someone can teach me a better way.  :)
-  // And yes, I realize that it's depricated; another reason to learn more!
+   // Initialize the request
+   userRequest.open('get', userURL, false);
+   // NOTE: I don't like use the syncronous request here, but I've not used this
+   // function before, so I expect that someone can teach me a better way.  :)
+   // And yes, I realize that it's depricated; another reason to learn more!
 
-	// Execute the request.
-	userRequest.send();
+   // Execute the request.
+   userRequest.send();
 }
 
 
@@ -145,15 +145,15 @@ function getUserData(login, usernamesText)
 ////////////////////////////////////////////////////////////////////////////////
 function getUsersInOrg() 
 {
-  // Since we've passed nothing to the function, "this" will refer to the 
-  // XMLHTTPRequest object that calls this function.
-  var jsonResponse = JSON.parse(this.responseText);
+   // Since we've passed nothing to the function, "this" will refer to the 
+   // XMLHTTPRequest object that calls this function.
+   var jsonResponse = JSON.parse(this.responseText);
 
-  // Loop through each username and get their public data.
-  for (var i = 0; i < jsonResponse.length; ++i)
-  {
-  	  getUserData(jsonResponse[i].login, usernamesText); // "login" is the GitHub username.
-  }
+   // Loop through each username and get their public data.
+   for (var i = 0; i < jsonResponse.length; ++i)
+   {
+      getUserData(jsonResponse[i].login, usernamesText); // "login" is the GitHub username.
+   }
 }
 
 
